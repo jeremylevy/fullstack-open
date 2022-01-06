@@ -4,21 +4,28 @@ const Heading = ({ text }) => <h1>{text}</h1>
 
 const Button = ({ text, onClick }) => <button onClick={onClick}>{text}</button>
 
-const StatisticLine = ({ text, value }) => <p>{text} {value}</p>
+const StatisticLine = ({ text, value }) => (
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
+)
 const Statistics = ({ goodCount, neutralCount, badCount }) => {
   const allFeedbackCount = goodCount + neutralCount + badCount
   const averageScore = allFeedbackCount > 0 ? ((goodCount * 1 + badCount * -1) / allFeedbackCount) : 0
   const positiveFeedbackPercent = allFeedbackCount > 0 ? (goodCount / allFeedbackCount) * 100 : 0
   
   return (
-    <div>
-      <StatisticLine text="good" value={goodCount} />
-      <StatisticLine text="neutral" value={neutralCount} />
-      <StatisticLine text="bad" value={badCount} />
-      <StatisticLine text="all" value={allFeedbackCount} />
-      <StatisticLine text="average" value={averageScore} />
-      <StatisticLine text="positive" value={positiveFeedbackPercent + ' %'} />
-    </div>
+    <table>
+      <tbody>
+        <StatisticLine text="good" value={goodCount} />
+        <StatisticLine text="neutral" value={neutralCount} />
+        <StatisticLine text="bad" value={badCount} />
+        <StatisticLine text="all" value={allFeedbackCount} />
+        <StatisticLine text="average" value={averageScore} />
+        <StatisticLine text="positive" value={positiveFeedbackPercent + ' %'} />
+      </tbody>
+    </table>
   )
 }
 
