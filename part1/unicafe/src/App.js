@@ -32,6 +32,8 @@ const App = () => {
   const incrementNeutral = () => setNeutral(neutral + 1)
   const incrementBad = () => setBad(bad + 1)
 
+  const hasFeedback = (good + neutral + bad) > 0
+
   return (
     <div>
       <Heading text="give feedback" />
@@ -42,7 +44,11 @@ const App = () => {
 
       <Heading text="statistics" />
 
-      <Statistics goodCount={good} neutralCount={neutral} badCount={bad} />
+      { 
+        hasFeedback 
+          ? <Statistics goodCount={good} neutralCount={neutral} badCount={bad} /> 
+          : <p>No feedback given</p> 
+      }
     </div>
   )
 }
