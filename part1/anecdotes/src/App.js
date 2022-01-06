@@ -14,13 +14,27 @@ const App = () => {
   const randomNumberFromInterval = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
    
   const [selected, setSelected] = useState(0)
+  const [votes, setVotes] = useState({})
+
+  const anecdote = anecdotes[selected]
+  const anecdoteVotes = votes[selected] || 0
 
   const changeAnecdote = () => setSelected(randomNumberFromInterval(0, anecdotes.length - 1))
+  const vote = () => setVotes({
+    ...votes,
+    [selected]: anecdoteVotes + 1
+  })
 
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
-      <p><button onClick={changeAnecdote}>next anecdote</button></p>
+      <p>{anecdote}</p>
+
+      <p>has {anecdoteVotes} vote(s)</p>
+
+      <p>
+        <button onClick={vote}>vote</button>
+        <button onClick={changeAnecdote}>next anecdote</button>
+      </p>
     </div>
   )
 }
