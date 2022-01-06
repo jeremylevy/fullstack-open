@@ -12,7 +12,9 @@ const Content = ({ parts }) => parts.map(part => <Part key={part.id} part={part.
 
 const Total = ({ parts }) => (
   <p>
-    total of {parts.reduce((acc, part) => acc += part.exercises, 0)} exercises
+    <strong>
+      total of {parts.reduce((acc, part) => acc += part.exercises, 0)} exercises
+    </strong>
   </p>
 )
 
