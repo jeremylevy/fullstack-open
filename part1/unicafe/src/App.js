@@ -4,14 +4,23 @@ const Heading = ({ text }) => <h1>{text}</h1>
 
 const Button = ({ text, onClick }) => <button onClick={onClick}>{text}</button>
 
-const FeedbackStatsRow = ({ type, count }) => <p>{type} {count}</p>
-const FeebackStats = ({ goodCount, neutralCount, badCount }) => (
-  <div>
-    <FeedbackStatsRow type="good" count={goodCount} />
-    <FeedbackStatsRow type="neutral" count={neutralCount} />
-    <FeedbackStatsRow type="bad" count={badCount} />
-  </div>
-)
+const FeedbackStatsRow = ({ type, value }) => <p>{type} {value}</p>
+const FeebackStats = ({ goodCount, neutralCount, badCount }) => {
+  const allFeedbackCount = goodCount + neutralCount + badCount
+  const averageScore = allFeedbackCount > 0 ? ((goodCount * 1 + badCount * -1) / allFeedbackCount) : 0
+  const positiveFeedbackPercent = allFeedbackCount > 0 ? (goodCount / allFeedbackCount) * 100 : 0
+  
+  return (
+    <div>
+      <FeedbackStatsRow type="good" value={goodCount} />
+      <FeedbackStatsRow type="neutral" value={neutralCount} />
+      <FeedbackStatsRow type="bad" value={badCount} />
+      <FeedbackStatsRow type="all" value={allFeedbackCount} />
+      <FeedbackStatsRow type="average" value={averageScore} />
+      <FeedbackStatsRow type="positive" value={positiveFeedbackPercent + ' %'} />
+    </div>
+  )
+}
 
 const App = () => {
   // save clicks of each button to its own state
