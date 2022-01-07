@@ -1,5 +1,32 @@
 import React, { useState } from 'react'
 
+const Filter = ({ onChange, value }) => (
+  <div>
+    <p>
+      filter shown with 
+      <input onChange={onChange} value={value} />
+    </p>
+  </div>
+)
+
+const PersonForm = ({ handlePersonSubmit, handleNameInputChange, handleNumberInputChange, newName, newNumber }) => (
+  <form onSubmit={handlePersonSubmit}>
+    <div>
+      name: <input onChange={handleNameInputChange} value={newName} />
+    </div>
+    <div>
+      number: <input onChange={handleNumberInputChange} value={newNumber} />
+    </div>
+    <div>
+      <button type="submit">add</button>
+    </div>
+  </form>
+)
+
+const Persons = ({ persons }) => (
+  persons.map(person => <p key={person.id}>{person.name} {person.number}</p>)
+)
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456', id: 1 },
@@ -64,31 +91,22 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      
-      <div>
-        <p>
-          filter shown with 
-          <input onChange={handleFilterInputChange} value={filter} />
-        </p>
-      </div>
+
+      <Filter onChange={handleFilterInputChange} value={filter} />
       
       <h2>add a new</h2>
-      
-      <form onSubmit={handlePersonSubmit}>
-        <div>
-          name: <input onChange={handleNameInputChange} value={newName} />
-        </div>
-        <div>
-          number: <input onChange={handleNumberInputChange} value={newNumber} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      
+
+      <PersonForm 
+        handlePersonSubmit={handlePersonSubmit} 
+        handleNameInputChange={handleNameInputChange} 
+        handleNumberInputChange={handleNumberInputChange}
+        newName={newName}
+        newNumber={newNumber}
+      />
+
       <h2>Numbers</h2>
       
-      { filteredPersons.map(person => <p key={person.id}>{person.name} {person.number}</p>) }
+      <Persons persons={filteredPersons} />
     </div>
   )
 }
