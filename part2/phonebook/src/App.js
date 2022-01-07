@@ -6,6 +6,14 @@ const App = () => {
   ]) 
   const [newName, setNewName] = useState('')
 
+  const personAlreadyExists = (personToCheck) => {
+    for (let person of persons) {
+      if (person.name === personToCheck.name) return true
+    }
+
+    return false
+  }
+
   const handleNameInputChange = (event) => {
     setNewName(event.target.value)
   }
@@ -13,9 +21,18 @@ const App = () => {
   const handlePersonSubmit = (event) => {
     event.preventDefault()
 
+    const newPerson = { name: newName }
+
+    if (personAlreadyExists(newPerson)) {
+      alert(`${newPerson.name} is already added to phonebook`)
+      setNewName('')
+
+      return
+    }
+
     const updatedPersons = [
       ...persons,
-      { name: newName }
+      newPerson
     ]
 
     setPersons(updatedPersons)
