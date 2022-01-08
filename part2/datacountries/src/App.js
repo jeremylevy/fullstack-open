@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
 const SearchRequestResults = ({ searchRequestError, searchRequest, countries, showCountry }) => {
@@ -38,28 +38,75 @@ const Countries = ({ countries, showCountry }) => (
   })
 )
 
-const Country = ({ country }) => (
-  <div>
-    <h1>{country.name.common}</h1>
-    
-    <p>capital {country.capital ? country.capital[0] : "undefined"}</p>
-    <p>population {country.population}</p>
-    
-    <h2>languages</h2>
-    
-    <ul>
-      {
-        Object
-          .values(country.languages)
-          .map(language => <li key={language}>{language}</li>)
-      }
-    </ul>
-    
-    <p>
-      <img src={country.flags.png} alt={`Flag of ${country.name.common}`} />
-    </p>
-  </div>
-)
+const Country = ({ country }) => {
+  const countryName = country.name.common
+  const countryCapital = country.capital && country.capital[0]
+
+  const [countryWeather, setCountryWeather] = useState()
+
+  useEffect(() => {
+    // Remove weather of previous loaded country
+    setCountryWeather(undefined)
+
+    if (!countryCapital) {
+      return
+    }
+
+    axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(countryCapital)}&units=metric&appid=${encodeURIComponent(process.env.REACT_APP_API_KEY)}`)
+      .then(response => {
+        setCountryWeather(response.data)
+      })
+      .catch(err => console.log(err))
+  }, [country])
+
+  return (
+    <div>
+      <h1>{countryName}</h1>
+      
+      <p>capital {countryCapital || "undefined"}</p>
+      <p>population {country.population}</p>
+      
+      <h2>Spoken languages</h2>
+      
+      <ul>
+        {
+          Object
+            .values(country.languages)
+            .map(language => <li key={language}>{language}</li>)
+        }
+      </ul>
+      
+      <p>
+        <img src={country.flags.png} alt={`Flag of ${country.name.common}`} />
+      </p>
+
+      { countryWeather ? <CountryWeather country={country} weather={countryWeather} /> : null }
+    </div>
+  )
+}
+
+const CountryWeather = ({ country, weather }) => {
+  return (
+    <div>
+      <h2>Weather in { country.capital[0] }</h2>
+
+      <p>
+        <strong>temperature: </strong>
+        { weather.main.temp }
+        &nbsp;
+        Celsius
+      </p>
+
+      <p>
+        <strong>wind: </strong>
+        { weather.wind.speed }
+        &nbsp;
+        mph
+      </p>
+    </div>
+  )
+}
 
 let searchRequest = null
 const App = () => {
