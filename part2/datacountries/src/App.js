@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 
-const SearchRequestResults = ({ searchRequestError, searchRequest, countries }) => {
+const SearchRequestResults = ({ searchRequestError, searchRequest, countries, showCountry }) => {
   if (searchRequest) {
     return <p>loading...</p>
   }
@@ -20,14 +20,22 @@ const SearchRequestResults = ({ searchRequestError, searchRequest, countries }) 
   }
 
   if (countries.length !== 1) {
-    return <Countries countries={countries} />
+    return <Countries countries={countries} showCountry={showCountry} />
   }
 
   return <Country country={countries[0]} />
 }
 
-const Countries = ({ countries }) => (
-  countries.map(country => <p key={country.name.common}>{country.name.common}</p>)
+const Countries = ({ countries, showCountry }) => (
+  countries.map(country => {
+    return (
+      <div key={country.name.common}>
+        {country.name.common}
+        &nbsp;
+        <button onClick={() => showCountry(country)}>show</button>
+      </div>
+    )
+  })
 )
 
 const Country = ({ country }) => (
@@ -55,9 +63,13 @@ const Country = ({ country }) => (
 
 let searchRequest = null
 const App = () => {
+  const [countryToShow, setCountryToShow] = useState(null)
   const [countries, setCountries] = useState([])
+
   const [searchTerms, setSearchTerms] = useState('')
   const [searchRequestError, setSearchRequestError] = useState(null)
+
+  const showCountry = (country) => setCountryToShow(country)
 
   const handleSearchInputChange = (event) => {
     const searchTerms = event.target.value
@@ -98,6 +110,7 @@ const App = () => {
     setSearchRequestError(null)
 
     setCountries([])
+    setCountryToShow(null)
   }
 
   return (
@@ -111,7 +124,10 @@ const App = () => {
         searchRequestError={searchRequestError} 
         searchRequest={searchRequest} 
         countries={countries} 
+        showCountry={showCountry}
       />
+
+      { countryToShow ? <Country country={countryToShow} /> : null }
     </div>
   )
 }
