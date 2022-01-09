@@ -24,8 +24,14 @@ const PersonForm = ({ handlePersonSubmit, handleNameInputChange, handleNumberInp
   </form>
 )
 
-const Persons = ({ persons }) => (
-  persons.map(person => <p key={person.id}>{person.name} {person.number}</p>)
+const Persons = ({ persons, handlePersonDelete }) => (
+  persons.map(person => (
+    <div key={person.id}>
+      {person.name} {person.number}
+      &nbsp;
+      <button onClick={() => handlePersonDelete(person.id)}>delete</button>
+    </div>
+  ))
 )
 
 const App = () => {
@@ -83,15 +89,22 @@ const App = () => {
     personsService
       .create(newPerson)
       .then(createdPerson => {
-        const updatedPersons = [
-          ...persons,
-          createdPerson
-        ]
-    
-        setPersons(updatedPersons)
-    
+        setPersons(persons.concat([createdPerson]))
         resetInputFields()
       })
+  }
+
+  const handlePersonDelete = (personToDeleteId) => {
+    const personToDelete = persons.find(person => person.id === personToDeleteId)
+    const deletionConfirmed = window.confirm(`Delete ${personToDelete.name} ?`)
+
+    if (!deletionConfirmed) {
+      return
+    }
+
+    personsService
+      .remove(personToDelete.id)
+      .then(() => setPersons(persons.filter(person => person !== personToDelete)))
   }
 
   return (
@@ -112,7 +125,7 @@ const App = () => {
 
       <h2>Numbers</h2>
       
-      <Persons persons={filteredPersons} />
+      <Persons persons={filteredPersons} handlePersonDelete={handlePersonDelete} />
     </div>
   )
 }
