@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import personsService from './services/persons'
 
 const Filter = ({ onChange, value }) => (
   <div>
@@ -38,9 +38,9 @@ const App = () => {
   const filteredPersons = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => setPersons(response.data))
+    personsService
+      .getAll()
+      .then(persons => setPersons(persons))
   }, [])
 
   const personAlreadyExists = (personToCheck) => {
@@ -80,12 +80,12 @@ const App = () => {
       return
     }
 
-    axios
-      .post('http://localhost:3001/persons', newPerson)
-      .then(response => {
+    personsService
+      .create(newPerson)
+      .then(createdPerson => {
         const updatedPersons = [
           ...persons,
-          response.data
+          createdPerson
         ]
     
         setPersons(updatedPersons)
