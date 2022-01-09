@@ -109,6 +109,12 @@ const App = () => {
           displayNotification('success', `Updated ${updatedPerson.name}`)
           resetInputFields()
         })
+        .catch(() => {
+          setPersons(persons.filter(person => person !== personWithThisName))
+
+          displayNotification('error', `Information of ${personWithThisName.name} has already been removed from server`)
+          resetInputFields()
+        })
 
       return
     }
