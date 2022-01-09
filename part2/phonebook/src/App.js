@@ -71,7 +71,7 @@ const App = () => {
   const handlePersonSubmit = (event) => {
     event.preventDefault()
 
-    const newPerson = { id: persons.length + 1, name: newName, number: newNumber }
+    const newPerson = { name: newName, number: newNumber }
 
     if (personAlreadyExists(newPerson)) {
       alert(`${newPerson.name} is already added to phonebook`)
@@ -80,14 +80,18 @@ const App = () => {
       return
     }
 
-    const updatedPersons = [
-      ...persons,
-      newPerson
-    ]
-
-    setPersons(updatedPersons)
-
-    resetInputFields()
+    axios
+      .post('http://localhost:3001/persons', newPerson)
+      .then(response => {
+        const updatedPersons = [
+          ...persons,
+          response.data
+        ]
+    
+        setPersons(updatedPersons)
+    
+        resetInputFields()
+      })
   }
 
   return (
