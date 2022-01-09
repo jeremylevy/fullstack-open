@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import personsService from './services/persons'
 
+const Notification = ({ type, message }) => (
+  <div className={'notification ' + type}>
+    {message}
+  </div>
+)
+
 const Filter = ({ onChange, value }) => (
   <div>
     <p>
@@ -29,12 +35,13 @@ const Persons = ({ persons, handlePersonDelete }) => (
     <div key={person.id}>
       {person.name} {person.number}
       &nbsp;
-      <button onClick={() => handlePersonDelete(person.id)}>delete</button>
+      <button onClick={() => handlePersonDelete(person)}>delete</button>
     </div>
   ))
 )
 
 const App = () => {
+  const [notification, setNotification] = useState(null)
   const [persons, setPersons] = useState([])
 
   const [newName, setNewName] = useState('')
@@ -50,6 +57,15 @@ const App = () => {
   }, [])
 
   const findPersonWithName = (name) => persons.find(person => person.name === name)
+
+  const displayNotification = (type, message, timeout = 5000) => {
+    setNotification({
+      type,
+      message
+    })
+
+    setTimeout(() => setNotification(null), timeout)
+  }
 
   const resetInputFields = () => {
     setNewName('')
@@ -81,7 +97,7 @@ const App = () => {
         resetInputFields()
         return
       }
-      
+
       personsService
         .update({
           ...personWithThisName,
@@ -89,6 +105,8 @@ const App = () => {
         })
         .then(updatedPerson => {
           setPersons(persons.map(person => person !== personWithThisName ? person : updatedPerson))
+          
+          displayNotification('success', `Updated ${updatedPerson.name}`)
           resetInputFields()
         })
 
@@ -99,12 +117,13 @@ const App = () => {
       .create(newPerson)
       .then(createdPerson => {
         setPersons(persons.concat([createdPerson]))
+
+        displayNotification('success', `Added ${createdPerson.name}`)
         resetInputFields()
       })
   }
 
-  const handlePersonDelete = (personToDeleteId) => {
-    const personToDelete = persons.find(person => person.id === personToDeleteId)
+  const handlePersonDelete = (personToDelete) => {
     const deletionConfirmed = window.confirm(`Delete ${personToDelete.name} ?`)
 
     if (!deletionConfirmed) {
@@ -119,6 +138,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      { notification ? <Notification type={notification.type} message={notification.message} /> : null }
 
       <Filter onChange={handleFilterInputChange} value={filter} />
       
