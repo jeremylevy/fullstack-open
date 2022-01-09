@@ -8,16 +8,22 @@ const getAll = () => (
     .then(response => response.data)
 )
 
-const create = newPerson => (
+const create = person => (
   axios
-    .post(baseUrl, newPerson)
+    .post(baseUrl, person)
     .then(response => response.data)
 )
 
-const remove = personId => (
+const update = person => (
   axios
-    .delete(`${baseUrl}/${personId}`)
+    .put(`${baseUrl}/${person.id}`, person)
     .then(response => response.data)
 )
 
-export default { getAll, create, remove }
+const remove = person => (
+  axios
+    .delete(`${baseUrl}/${person.id}`)
+    .then(response => response.data)
+)
+
+export default { getAll, create, update, remove }

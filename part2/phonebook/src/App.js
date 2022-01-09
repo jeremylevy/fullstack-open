@@ -49,13 +49,7 @@ const App = () => {
       .then(persons => setPersons(persons))
   }, [])
 
-  const personAlreadyExists = (personToCheck) => {
-    for (let person of persons) {
-      if (person.name === personToCheck.name) return true
-    }
-
-    return false
-  }
+  const findPersonWithName = (name) => persons.find(person => person.name === name)
 
   const resetInputFields = () => {
     setNewName('')
@@ -78,10 +72,25 @@ const App = () => {
     event.preventDefault()
 
     const newPerson = { name: newName, number: newNumber }
+    const personWithThisName = findPersonWithName(newPerson.name)
 
-    if (personAlreadyExists(newPerson)) {
-      alert(`${newPerson.name} is already added to phonebook`)
-      resetInputFields()
+    if (personWithThisName) {
+      const updateConfirmed = window.confirm(`${newPerson.name} is already added to phonebook, replace the old number with a new one?`)
+
+      if (!updateConfirmed) {
+        resetInputFields()
+        return
+      }
+      
+      personsService
+        .update({
+          ...personWithThisName,
+          number: newNumber
+        })
+        .then(updatedPerson => {
+          setPersons(persons.map(person => person !== personWithThisName ? person : updatedPerson))
+          resetInputFields()
+        })
 
       return
     }
@@ -103,7 +112,7 @@ const App = () => {
     }
 
     personsService
-      .remove(personToDelete.id)
+      .remove(personToDelete)
       .then(() => setPersons(persons.filter(person => person !== personToDelete)))
   }
 
