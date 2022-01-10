@@ -54,6 +54,7 @@ const App = () => {
     personsService
       .getAll()
       .then(persons => setPersons(persons))
+      .catch(error => displayNotification('error', error.response.data.error))
   }, [])
 
   const findPersonWithName = (name) => persons.find(person => person.name === name)
@@ -109,12 +110,7 @@ const App = () => {
           displayNotification('success', `Updated ${updatedPerson.name}`)
           resetInputFields()
         })
-        .catch(() => {
-          setPersons(persons.filter(person => person !== personWithThisName))
-
-          displayNotification('error', `Information of ${personWithThisName.name} has already been removed from server`)
-          resetInputFields()
-        })
+        .catch(error => displayNotification('error', error.response.data.error))
 
       return
     }
@@ -127,6 +123,7 @@ const App = () => {
         displayNotification('success', `Added ${createdPerson.name}`)
         resetInputFields()
       })
+      .catch(error => displayNotification('error', error.response.data.error))
   }
 
   const handlePersonDelete = (personToDelete) => {
@@ -139,6 +136,7 @@ const App = () => {
     personsService
       .remove(personToDelete)
       .then(() => setPersons(persons.filter(person => person !== personToDelete)))
+      .catch(error => displayNotification('error', error.response.data.error))
   }
 
   return (
