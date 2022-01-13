@@ -99,6 +99,29 @@ describe('POST /api/blogs', () => {
   })
 })
 
+describe('PUT /api/blogs/:id', () => {
+  test('an existing blog can be updated', async () => {
+    const blogsInDbBeforeUpdate = await helper.blogsInDb()
+    const blogToUpdate = blogsInDbBeforeUpdate[0]
+
+    const updatedBlog = {
+      ...blogToUpdate,
+      likes: blogToUpdate.likes + 1
+    }
+
+    const response = await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(updatedBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+    
+    expect(response.body).toEqual(JSON.parse(JSON.stringify(updatedBlog)))
+
+    const blogsInDbAfterUpdate = await helper.blogsInDb()
+    expect(blogsInDbAfterUpdate).toContainEqual(updatedBlog)
+  })
+})
+
 describe('DELETE /api/blogs/:id', () => {
   test('delete existing blog', async () => {
     const blogsInDbBeforeDeletion = await helper.blogsInDb()
