@@ -80,6 +80,25 @@ test('a blog with missing likes can be added and get \'0\' as default value', as
   expect(blogsInDb).toContainEqual(createdBlog)
 })
 
+test('a blog with missing \'title\' and \'url\' cannot be added', async () => {
+  const newBlog = {
+    author: "author",
+    likes: 18
+  }
+  
+  const response = await api.post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+
+  const returnedError = response.body.error
+  expect(returnedError).toMatch(new RegExp('Path `url` is required'))
+  expect(returnedError).toMatch(new RegExp('Path `title` is required'))
+
+  const blogsInDb = await helper.blogsInDb()
+  expect(blogsInDb).toHaveLength(helper.initialBlogs.length)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })

@@ -7,10 +7,17 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response) => {
-  const blog = await new Blog(request.body).save()
+blogsRouter.post('/', async (request, response, next) => {
+  try {
+    const blog = await new Blog(request.body).save()
+    response.status(201).json(blog)
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      return response.status(400).json({ error: error.message })
+    }
 
-  response.status(201).json(blog)
+    return next(error)
+  }
 })
 
 module.exports = blogsRouter
