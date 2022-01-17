@@ -5,10 +5,16 @@ const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
+
+let initialUsersInDb = []
 
 beforeEach(async () => {
+  await User.deleteMany({})
+  initialUsersInDb = await User.insertMany(helper.initialUsers)
+
   await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
+  await Blog.insertMany(helper.initialBlogsFor(initialUsersInDb[0]))
 })
 
 describe('GET /api/blogs', () => {
@@ -41,14 +47,19 @@ describe('POST /api/blogs', () => {
       url: "url",
       likes: 18
     }
+    const user = initialUsersInDb[0]
   
     const response = await api.post('/api/blogs')
+      .set('Authorization', helper.authorizationHeaderFor(user))
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
   
     const createdBlog = response.body
-    expect(createdBlog).toMatchObject(newBlog)
+    expect(createdBlog).toMatchObject({
+      ...newBlog,
+      user: user.id
+    })
   
     const blogsInDb = await helper.blogsInDb()
     expect(blogsInDb).toHaveLength(helper.initialBlogs.length + 1)
@@ -61,12 +72,15 @@ describe('POST /api/blogs', () => {
       author: "author",
       url: "url",
     }
+    const user = initialUsersInDb[0]
     const expectedCreatedBlog = {
       ...newBlog,
-      likes: 0
+      likes: 0,
+      user: user.id
     }
   
     const response = await api.post('/api/blogs')
+      .set('Authorization', helper.authorizationHeaderFor(user))
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -84,8 +98,10 @@ describe('POST /api/blogs', () => {
       author: "author",
       likes: 18
     }
+    const user = initialUsersInDb[0]
   
     const response = await api.post('/api/blogs')
+      .set('Authorization', helper.authorizationHeaderFor(user))
       .send(newBlog)
       .expect(400)
       .expect('Content-Type', /application\/json/)
@@ -124,11 +140,12 @@ describe('PUT /api/blogs/:id', () => {
 
 describe('DELETE /api/blogs/:id', () => {
   test('delete existing blog', async () => {
-    const blogsInDbBeforeDeletion = await helper.blogsInDb()
+    const blogsInDbBeforeDeletion = await helper.blogsInDbWithUserPopulated()
     const blogToDelete = blogsInDbBeforeDeletion[0]
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', helper.authorizationHeaderFor(blogToDelete.user))
       .expect(204)
 
     const blogsInDbAfterDeletion = await helper.blogsInDb()
