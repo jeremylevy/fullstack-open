@@ -1,23 +1,33 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog.find({}).populate('user', {
+    username: 1,
+    name: 1
+  })
 
   response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response, next) => {
-  try {
-    const blog = await new Blog(request.body).save()
-    response.status(201).json(blog)
-  } catch (error) {
-    if (error.name === 'ValidationError') {
-      return response.status(400).json({ error: error.message })
-    }
+blogsRouter.post('/', async (request, response) => {
+  const createdBlogAuthor = await User.findOne({})
+  const createdBlog = await new Blog({
+    ...request.body,
+    user: createdBlogAuthor.id
+  }).save()
 
-    return next(error)
-  }
+  // We use 'updateOne' instead of 'save'
+  // to bypass 'mongoose-unique-validator' bug.
+  // See: https://github.com/blakehaswell/mongoose-unique-validator/issues/88
+  await User.updateOne({
+    _id: createdBlogAuthor.id
+  }, {
+    blogs: createdBlogAuthor.blogs.concat(createdBlog._id)
+  })
+
+  response.status(201).json(createdBlog)
 })
 
 blogsRouter.put('/:id', async (request, response) => {
