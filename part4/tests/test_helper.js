@@ -1,4 +1,5 @@
 const blog = require('../models/blog')
+const user = require('../models/user')
 
 const initialBlogs = [
   {
@@ -44,7 +45,24 @@ const blogsInDb = async () => {
   return blogs.map(blog => blog.toJSON())
 }
 
+const initialUsers = [{
+  "username": "root",
+  "passwordHash": "$2y$10$rUkh.0ulie2cFJl6s/zECO7DaSzOdx7N1ioOcMz6KeDcDEBcseTGu",
+  "name": "root_name"
+}, {
+  "username": "root2",
+  "passwordHash": "$2y$10$tCemKLEQhZy73EdAqbpkSeiFH7xieE5e7tvnl77wBHYggXZZnZ8TW",
+  "name": "root2_name"
+}]
+
+const usersInDb = async () => {
+  const users = await user.find({})
+  return users.map(user => user.toJSON())
+}
+
 module.exports = {
   initialBlogs,
-  blogsInDb
+  blogsInDb,
+  initialUsers,
+  usersInDb
 }
