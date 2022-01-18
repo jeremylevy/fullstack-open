@@ -1,7 +1,17 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, handleBlogLike }) => {
   const [isExpanded, setIsExpanded] = useState(false)
+
+  const preHandleBlogLike = async (event) => {
+    event.preventDefault()
+
+    await handleBlogLike({
+      ...blog,
+      likes: blog.likes + 1,
+      user: blog.user.id
+    })
+  }
 
   const toggleExpandedView = (event) => {
     event.preventDefault()
@@ -31,7 +41,7 @@ const Blog = ({ blog }) => {
       <p>
         likes {blog.likes}
         &nbsp;
-        <button>like</button>
+        <button onClick={preHandleBlogLike}>like</button>
       </p>
       
       <p>{blog.author}</p>
