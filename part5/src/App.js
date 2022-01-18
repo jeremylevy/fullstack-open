@@ -15,11 +15,7 @@ const Notification = ({ type, message }) => (
 
 const App = () => {
   const [notification, setNotification] = useState(null)
-
   const [blogs, setBlogs] = useState([])
-  const [newBlogTitle, setNewBlogTitle] = useState('')
-  const [newBlogAuthor, setNewBlogAuthor] = useState('')
-  const [newBlogUrl, setNewBlogUrl] = useState('')
 
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
@@ -85,9 +81,11 @@ const App = () => {
     setUser(null)
   }
 
-  const handleNewBlogSubmit = async (event) => {
-    event.preventDefault()
-
+  const handleNewBlogSubmit = async ({
+    newBlogTitle,
+    newBlogAuthor,
+    newBlogUrl
+  }) => {
     try {
       const createdBlog = await blogService.create({
         title: newBlogTitle,
@@ -96,10 +94,6 @@ const App = () => {
       })
 
       setBlogs(blogs.concat(createdBlog))
-
-      setNewBlogTitle('')
-      setNewBlogAuthor('')
-      setNewBlogUrl('')
 
       displayNotification('success', `a new blog ${createdBlog.title} by ${createdBlog.author} added`)
 
@@ -154,15 +148,7 @@ const App = () => {
       </p>
 
       <Togglable buttonLabel="create new blog" ref={newBlogFormRef}>
-        <NewBlogForm
-          handleNewBlogSubmit={handleNewBlogSubmit}
-          newBlogTitle={newBlogTitle} 
-          setNewBlogTitle={setNewBlogTitle} 
-          newBlogAuthor={newBlogAuthor} 
-          setNewBlogAuthor={setNewBlogAuthor}
-          newBlogUrl={newBlogUrl}
-          setNewBlogUrl={setNewBlogUrl}
-        />
+        <NewBlogForm handleNewBlogSubmit={handleNewBlogSubmit} />
       </Togglable>
 
       {blogs.map(blog =>

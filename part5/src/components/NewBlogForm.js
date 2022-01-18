@@ -1,19 +1,31 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 const NewBlogForm = ({
-  handleNewBlogSubmit,
-  newBlogTitle,
-  setNewBlogTitle,
-  newBlogAuthor,
-  setNewBlogAuthor,
-  newBlogUrl,
-  setNewBlogUrl
+  handleNewBlogSubmit
 }) => {
+  const [newBlogTitle, setNewBlogTitle] = useState('')
+  const [newBlogAuthor, setNewBlogAuthor] = useState('')
+  const [newBlogUrl, setNewBlogUrl] = useState('')
+
+  const preHandleNewBlogSubmit = async (event) => {
+    event.preventDefault()
+
+    await handleNewBlogSubmit({
+      newBlogTitle,
+      newBlogAuthor,
+      newBlogUrl
+    })
+
+    setNewBlogTitle('')
+    setNewBlogAuthor('')
+    setNewBlogUrl('')
+  }
+
   return (
     <div>
       <h2>create new</h2>
 
-      <form onSubmit={handleNewBlogSubmit}>
+      <form onSubmit={preHandleNewBlogSubmit}>
         <div>
           title
             <input
