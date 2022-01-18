@@ -3,7 +3,15 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const Notification = ({ type, message }) => (
+  <div className={'notification ' + type}>
+    {message}
+  </div>
+)
+
 const App = () => {
+  const [notification, setNotification] = useState(null)
+
   const [blogs, setBlogs] = useState([])
   const [newBlogTitle, setNewBlogTitle] = useState('')
   const [newBlogAuthor, setNewBlogAuthor] = useState('')
@@ -32,6 +40,15 @@ const App = () => {
     blogService.getAll().then(blogs => setBlogs(blogs))  
   }, [user])
 
+  const displayNotification = (type, message, timeout = 5000) => {
+    setNotification({
+      type,
+      message
+    })
+
+    setTimeout(() => setNotification(null), timeout)
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
     
@@ -50,6 +67,8 @@ const App = () => {
       setPassword('')
     } catch (exception) {
       console.log(exception)
+
+      displayNotification('error', 'Invalid username or password')
     }
   }
 
@@ -75,6 +94,9 @@ const App = () => {
       setNewBlogTitle('')
       setNewBlogAuthor('')
       setNewBlogUrl('')
+
+      displayNotification('success', `a new blog ${createdBlog.title} by ${createdBlog.author} added`)
+
     } catch (exception) {
       console.log(exception)
     }
@@ -84,6 +106,9 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
+
+        { notification ? <Notification type={notification.type} message={notification.message} /> : null }
+
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -112,6 +137,9 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+
+      { notification ? <Notification type={notification.type} message={notification.message} /> : null }
+
       <p>
         { user.name } logged in&nbsp;
         <button onClick={handleLogout}>logout</button>
