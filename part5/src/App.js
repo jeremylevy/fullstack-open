@@ -121,6 +121,18 @@ const App = () => {
     }
   }
 
+  const handleBlogDeletion = async (blogToDelete) => {
+    try {
+      await blogService.remove(blogToDelete)
+
+      setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
+
+      displayNotification('success', `blog ${blogToDelete.title} by ${blogToDelete.author} deleted`)
+    } catch (exception) {
+      console.log(exception)
+    }
+  }
+
   if (user === null) {
     return (
       <div>
@@ -168,7 +180,12 @@ const App = () => {
         <NewBlogForm handleNewBlogSubmit={handleNewBlogSubmit} />
       </Togglable>
 
-      { blogs.map(blog => <Blog key={blog.id} blog={blog} handleBlogLike={handleBlogLike} />) }
+      { blogs.map(blog => <Blog 
+        key={blog.id} 
+        loggedUser={user} 
+        blog={blog} 
+        handleBlogLike={handleBlogLike} 
+        handleBlogDeletion={handleBlogDeletion} />) }
     </div>
   )
 }

@@ -1,6 +1,11 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog, handleBlogLike }) => {
+const Blog = ({ 
+  loggedUser, 
+  blog, 
+  handleBlogLike, 
+  handleBlogDeletion 
+}) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const preHandleBlogLike = async (event) => {
@@ -11,6 +16,18 @@ const Blog = ({ blog, handleBlogLike }) => {
       likes: blog.likes + 1,
       user: blog.user.id
     })
+  }
+
+  const preHandleBlogDeletion = async (event) => {
+    event.preventDefault()
+
+    const deletionConfirmed = window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
+
+    if (!deletionConfirmed) {
+      return
+    }
+
+    await handleBlogDeletion(blog)
   }
 
   const toggleExpandedView = (event) => {
@@ -45,6 +62,10 @@ const Blog = ({ blog, handleBlogLike }) => {
       </p>
       
       <p>{blog.author}</p>
+
+      { blog.user.username === loggedUser.username 
+        ? <button onClick={preHandleBlogDeletion}>remove</button> 
+        : null }
     </div>
   )
 
