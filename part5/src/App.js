@@ -15,7 +15,12 @@ const Notification = ({ type, message }) => (
 
 const App = () => {
   const [notification, setNotification] = useState(null)
-  const [blogs, setBlogs] = useState([])
+
+  const [blogs, _setBlogs] = useState([])
+  // We want blogs ordered by likes (most liked first)
+  const setBlogs = (blogs) => {
+    _setBlogs([...blogs].sort((blogA, blogB) => blogB.likes - blogA.likes))
+  }
 
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
