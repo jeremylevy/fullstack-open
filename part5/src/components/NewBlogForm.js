@@ -28,34 +28,34 @@ const NewBlogForm = ({
       <form onSubmit={preHandleNewBlogSubmit}>
         <div>
           title
-            <input
+          <input
             type="text"
             value={newBlogTitle}
             name="new_blog_title"
             onChange={({ target }) => setNewBlogTitle(target.value)}
           />
         </div>
-        
+
         <div>
           author
-            <input
+          <input
             type="text"
             value={newBlogAuthor}
             name="new_blog_author"
             onChange={({ target }) => setNewBlogAuthor(target.value)}
           />
         </div>
-        
+
         <div>
           url
-            <input
+          <input
             type="text"
             value={newBlogUrl}
             name="new_blog_url"
             onChange={({ target }) => setNewBlogUrl(target.value)}
           />
         </div>
-        
+
         <button type="submit">create</button>
       </form>
     </div>

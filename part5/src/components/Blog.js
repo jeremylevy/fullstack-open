@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 
-const Blog = ({ 
-  loggedUser, 
-  blog, 
-  handleBlogLike, 
-  handleBlogDeletion 
+const Blog = ({
+  loggedUser,
+  blog,
+  handleBlogLike,
+  handleBlogDeletion
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -52,19 +52,19 @@ const Blog = ({
         &nbsp;
         <button onClick={toggleExpandedView}>hide</button>
       </p>
-      
+
       <p>{blog.url}</p>
-      
+
       <p>
         likes {blog.likes}
         &nbsp;
         <button onClick={preHandleBlogLike}>like</button>
       </p>
-      
+
       <p>{blog.author}</p>
 
-      { blog.user.username === loggedUser.username 
-        ? <button onClick={preHandleBlogDeletion}>remove</button> 
+      { blog.user.username === loggedUser.username
+        ? <button onClick={preHandleBlogDeletion}>remove</button>
         : null }
     </div>
   )

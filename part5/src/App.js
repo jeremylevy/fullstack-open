@@ -22,7 +22,7 @@ const App = () => {
     _setBlogs([...blogs].sort((blogA, blogB) => blogB.likes - blogA.likes))
   }
 
-  const [username, setUsername] = useState('') 
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
@@ -30,10 +30,10 @@ const App = () => {
 
   useEffect(() => {
     const userAsJson = window.localStorage.getItem('user')
-    
+
     if (userAsJson) {
       const user = JSON.parse(userAsJson)
-      
+
       setUser(user)
       blogService.setToken(user.token)
     }
@@ -44,7 +44,7 @@ const App = () => {
       return
     }
 
-    blogService.getAll().then(blogs => setBlogs(blogs))  
+    blogService.getAll().then(blogs => setBlogs(blogs))
   }, [user])
 
   const displayNotification = (type, message, timeout = 5000) => {
@@ -58,7 +58,7 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
+
     try {
       const user = await loginService.login({
         username,
@@ -143,7 +143,7 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             username
-              <input
+            <input
               type="text"
               value={username}
               name="Username"
@@ -152,7 +152,7 @@ const App = () => {
           </div>
           <div>
             password
-              <input
+            <input
               type="password"
               value={password}
               name="Password"
@@ -180,11 +180,11 @@ const App = () => {
         <NewBlogForm handleNewBlogSubmit={handleNewBlogSubmit} />
       </Togglable>
 
-      { blogs.map(blog => <Blog 
-        key={blog.id} 
-        loggedUser={user} 
-        blog={blog} 
-        handleBlogLike={handleBlogLike} 
+      { blogs.map(blog => <Blog
+        key={blog.id}
+        loggedUser={user}
+        blog={blog}
+        handleBlogLike={handleBlogLike}
         handleBlogDeletion={handleBlogDeletion} />) }
     </div>
   )

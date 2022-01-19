@@ -43,10 +43,10 @@ const remove = (blog) => {
   return request.then(response => response.data)
 }
 
-export default { 
-  getAll, 
-  setToken, 
-  create, 
+export default {
+  getAll,
+  setToken,
+  create,
   update,
   remove
 }
