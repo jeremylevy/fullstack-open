@@ -43,3 +43,26 @@ test('url and number of likes are shown when the button controlling the shown de
   expect(blogComponent.container).toHaveTextContent(fixtures.blog.url)
   expect(blogComponent.container).toHaveTextContent(`likes ${fixtures.blog.likes}`)
 })
+
+test('if the like button is clicked twice, the \'handleBlogLike\' function is called twice', () => {
+  const handleBlogLikeMock = jest.fn()
+
+  const blogComponent = render(
+    <Blog
+      loggedUser={fixtures.loggedUser}
+      blog={fixtures.blog}
+      handleBlogLike={handleBlogLikeMock}
+    />
+  )
+
+  // we must click on the 'show' button
+  // to display the 'like' button
+  const showDetailsBtn = blogComponent.getByText('show')
+  fireEvent.click(showDetailsBtn)
+
+  const likeBtn = blogComponent.getByText('like')
+  fireEvent.click(likeBtn)
+  fireEvent.click(likeBtn)
+
+  expect(handleBlogLikeMock.mock.calls).toHaveLength(2)
+})
