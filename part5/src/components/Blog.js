@@ -38,7 +38,7 @@ const Blog = ({
   const collapsedView = () => (
     <div>
       <p>
-        {blog.title}
+        {blog.title} by {blog.author}
         &nbsp;
         <button onClick={toggleExpandedView}>view</button>
       </p>
