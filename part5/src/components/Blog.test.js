@@ -1,6 +1,6 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
-import { render } from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
 import Blog from './Blog'
 
 const fixtures = {}
@@ -30,4 +30,16 @@ test('renders title and author, but does not render its url or number of likes b
 
   expect(blogComponent.container).not.toHaveTextContent(fixtures.blog.url)
   expect(blogComponent.container).not.toHaveTextContent(`likes ${fixtures.blog.likes}`)
+})
+
+test('url and number of likes are shown when the button controlling the shown details has been clicked', () => {
+  const blogComponent = render(
+    <Blog loggedUser={fixtures.loggedUser} blog={fixtures.blog} />
+  )
+
+  const showDetailsBtn = blogComponent.getByText('show')
+  fireEvent.click(showDetailsBtn)
+
+  expect(blogComponent.container).toHaveTextContent(fixtures.blog.url)
+  expect(blogComponent.container).toHaveTextContent(`likes ${fixtures.blog.likes}`)
 })

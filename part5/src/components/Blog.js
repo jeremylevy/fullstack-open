@@ -40,7 +40,7 @@ const Blog = ({
       <p>
         {blog.title} by {blog.author}
         &nbsp;
-        <button onClick={toggleExpandedView}>view</button>
+        <button onClick={toggleExpandedView}>show</button>
       </p>
     </div>
   )
