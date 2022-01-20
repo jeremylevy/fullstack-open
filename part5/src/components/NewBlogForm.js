@@ -1,19 +1,17 @@
 import React, { useState } from 'react'
 
-const NewBlogForm = ({
-  handleNewBlogSubmit
-}) => {
+const NewBlogForm = ({ addNewBlog }) => {
   const [newBlogTitle, setNewBlogTitle] = useState('')
   const [newBlogAuthor, setNewBlogAuthor] = useState('')
   const [newBlogUrl, setNewBlogUrl] = useState('')
 
-  const preHandleNewBlogSubmit = async (event) => {
+  const handleNewBlogSubmit = async (event) => {
     event.preventDefault()
 
-    await handleNewBlogSubmit({
-      newBlogTitle,
-      newBlogAuthor,
-      newBlogUrl
+    await addNewBlog({
+      title: newBlogTitle,
+      author: newBlogAuthor,
+      url: newBlogUrl
     })
 
     setNewBlogTitle('')
@@ -25,33 +23,36 @@ const NewBlogForm = ({
     <div>
       <h2>create new</h2>
 
-      <form onSubmit={preHandleNewBlogSubmit}>
+      <form onSubmit={handleNewBlogSubmit}>
         <div>
-          title
+          <label htmlFor="newBlogTitle">title</label>
           <input
+            id="newBlogTitle"
             type="text"
             value={newBlogTitle}
-            name="new_blog_title"
+            name="newBlogTitle"
             onChange={({ target }) => setNewBlogTitle(target.value)}
           />
         </div>
 
         <div>
-          author
+          <label htmlFor="newBlogAuthor">author</label>
           <input
+            id="newBlogAuthor"
             type="text"
             value={newBlogAuthor}
-            name="new_blog_author"
+            name="newBlogAuthor"
             onChange={({ target }) => setNewBlogAuthor(target.value)}
           />
         </div>
 
         <div>
-          url
+          <label htmlFor="newBlogUrl">url</label>
           <input
+            id="newBlogUrl"
             type="text"
             value={newBlogUrl}
-            name="new_blog_url"
+            name="newBlogUrl"
             onChange={({ target }) => setNewBlogUrl(target.value)}
           />
         </div>

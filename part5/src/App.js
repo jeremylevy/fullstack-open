@@ -86,24 +86,13 @@ const App = () => {
     setUser(null)
   }
 
-  const handleNewBlogSubmit = async ({
-    newBlogTitle,
-    newBlogAuthor,
-    newBlogUrl
-  }) => {
+  const addNewBlog = async (newBlog) => {
     try {
-      const createdBlog = await blogService.create({
-        title: newBlogTitle,
-        author: newBlogAuthor,
-        url: newBlogUrl
-      })
-
+      const createdBlog = await blogService.create(newBlog)
       setBlogs(blogs.concat(createdBlog))
-
       displayNotification('success', `a new blog ${createdBlog.title} by ${createdBlog.author} added`)
 
       newBlogFormRef.current.toggleVisibility()
-
     } catch (exception) {
       console.log(exception)
     }
@@ -177,7 +166,7 @@ const App = () => {
       </p>
 
       <Togglable buttonLabel="create new blog" ref={newBlogFormRef}>
-        <NewBlogForm handleNewBlogSubmit={handleNewBlogSubmit} />
+        <NewBlogForm addNewBlog={addNewBlog} />
       </Togglable>
 
       { blogs.map(blog => <Blog
