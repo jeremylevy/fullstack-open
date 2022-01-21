@@ -129,7 +129,7 @@ const App = () => {
 
         { notification ? <Notification type={notification.type} message={notification.message} /> : null }
 
-        <form onSubmit={handleLogin}>
+        <form className="loginForm" onSubmit={handleLogin}>
           <div>
             username
             <input
