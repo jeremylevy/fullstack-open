@@ -31,11 +31,16 @@ Cypress.Commands.add('login', (user) => (
         .its('localStorage')
         .invoke('setItem', 'user', JSON.stringify(loginReqResp))
 
-      cy.visit('http://localhost:3000')
+      cy.reload()
 
       return cy.wrap(loginReqResp)
     })
 ))
+
+Cypress.Commands.add('createUser', (user) => {
+  cy.request('POST', 'http://localhost:3003/api/users/', user)
+    .then(createUser => cy.wrap(createUser))
+})
 
 Cypress.Commands.add('createBlog', (blog, userToken) => (
   cy.request({

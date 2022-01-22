@@ -4,6 +4,12 @@ const user = {
   password: '123456'
 }
 
+const user2 = {
+  name: 'John John',
+  username: 'john',
+  password: '123456'
+}
+
 const blog = {
   title: 'blog_title',
   author: 'blog_author',
@@ -15,7 +21,7 @@ describe('Blog app', function() {
   beforeEach(function() {
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
 
-    cy.request('POST', 'http://localhost:3003/api/users/', user)
+    cy.createUser(user)
 
     cy.visit('http://localhost:3000')
   })
@@ -95,6 +101,48 @@ describe('Blog app', function() {
 
       cy.get('@createdBlog')
         .should('contain', `likes ${blog.likes + 1}`)
+    })
+
+    it('A blog can be deleted', function() {
+      cy.get('.blog:last').as('createdBlog')
+
+      cy.get('@createdBlog')
+        .contains('show')
+        .click()
+
+      cy.get('@createdBlog')
+        .contains('remove')
+        .click()
+
+      cy.get('.success')
+        .should('be.visible')
+        .should('contain', `${blog.title} by ${blog.author} deleted`)
+
+      cy.get('@createdBlog')
+        .should('not.exist')
+    })
+
+    it('A blog can only be deleted by its author', function() {
+      cy.createUser(user2)
+      cy.login(user2).then(({ token }) => cy.createBlog(blog, token))
+
+      cy.login(user)
+
+      cy.get('.blog:first').as('blogOfUser')
+      cy.get('@blogOfUser')
+        .should('be.visible')
+        .contains('show')
+        .click()
+      cy.get('@blogOfUser')
+        .should('contain', 'remove')
+
+      cy.get('.blog:last').as('blogOfOtherUser')
+      cy.get('@blogOfOtherUser')
+        .should('be.visible')
+        .contains('show')
+        .click()
+      cy.get('@blogOfOtherUser')
+        .should('not.contain', 'remove')
     })
   })
 })
