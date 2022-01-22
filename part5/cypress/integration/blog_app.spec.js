@@ -31,7 +31,7 @@ describe('Blog app', function() {
 
       cy.get('button[type="submit"]').click()
 
-      cy.contains(`${user.name} logged in`)
+      cy.get('html').should('contain', `${user.name} logged in`)
     })
 
     it('fails with wrong credentials', function() {
@@ -51,11 +51,7 @@ describe('Blog app', function() {
 
   describe('When logged in', function() {
     beforeEach(function() {
-      cy.request('POST', 'http://localhost:3003/api/login', user)
-        .then(response => {
-          localStorage.setItem('user', JSON.stringify(response.body))
-          cy.visit('http://localhost:3000')
-        })
+      cy.login(user)
     })
 
     it('A blog can be created', function() {
@@ -73,6 +69,32 @@ describe('Blog app', function() {
       cy.get('.blog:last')
         .should('contain', blog.title)
         .and('contain', blog.author)
+    })
+  })
+
+  describe('When logged in with a blog added', function() {
+    beforeEach(function() {
+      cy.login(user)
+        .then(({ token }) => cy.createBlog(blog, token))
+    })
+
+    it('A blog can be liked', function() {
+      cy.get('.blog:last').as('createdBlog')
+
+      cy.get('@createdBlog')
+        .contains('show')
+        .click()
+
+      cy.get('@createdBlog')
+        .contains('like')
+        .click()
+
+      cy.get('.success')
+        .should('be.visible')
+        .should('contain', `${blog.title} by ${blog.author} liked`)
+
+      cy.get('@createdBlog')
+        .should('contain', `likes ${blog.likes + 1}`)
     })
   })
 })
