@@ -145,4 +145,34 @@ describe('Blog app', function() {
         .should('not.contain', 'remove')
     })
   })
+
+  describe('When logged in with many blogs added', function () {
+    beforeEach(function() {
+      cy.login(user)
+        .then(({ token }) => {
+          cy.createBlog(blog, token)
+          cy.createBlog(blog, token)
+        })
+    })
+
+    it('Blogs are sorted by likes', function() {
+      cy.get('.blog')
+        .should('have.length', 2)
+
+      cy.get('.blog:last')
+        .as('lastBlog')
+      cy.get('@lastBlog')
+        .contains('show')
+        .click()
+      cy.get('@lastBlog')
+        .contains('like')
+        .click()
+
+      cy.get('@lastBlog').then($lastBlog => {
+        cy.get('.blog:first').should($firstBlog => {
+          expect($lastBlog.is($firstBlog)).to.equal(true)
+        })
+      })
+    })
+  })
 })
