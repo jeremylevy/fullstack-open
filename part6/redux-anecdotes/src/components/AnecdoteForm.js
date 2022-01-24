@@ -12,7 +12,7 @@ const AnecdoteForm = () => {
     const anecdote = submitEvent.target.anecdote.value
 
     dispatch(addAnecdote(anecdote))
-    dispatch(addNotification(`you added '${anecdote}'`))
+    dispatch(addNotification(`you added '${anecdote}'`, 5000))
 
     // clean input
     submitEvent.target.anecdote.value = ''

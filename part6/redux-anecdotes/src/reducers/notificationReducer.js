@@ -3,7 +3,10 @@ const initialState = null
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'NOTIFICATION_ADD':
-      return action.notification
+      return {
+        content: action.content,
+        hideAfterMs: action.hideAfterMs
+      }
     case 'NOTIFICATION_REMOVE':
       return null
     default:
@@ -11,12 +14,15 @@ const reducer = (state = initialState, action) => {
   }
 }
 
-export const addNotification = (notification) => (
-  {
-    type: 'NOTIFICATION_ADD',
-    notification
+export const addNotification = (content, hideAfterMs) => {
+  return async dispatch => {
+    dispatch({
+      type: 'NOTIFICATION_ADD',
+      content,
+      hideAfterMs
+    })
   }
-)
+}
 
 export const removeNotification = () => (
   {

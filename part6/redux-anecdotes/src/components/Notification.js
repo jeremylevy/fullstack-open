@@ -14,7 +14,7 @@ const Notification = () => {
 
     const hideTimeout = window.setTimeout(() => {
       dispatch(removeNotification())
-    }, 5000)
+    }, notification.hideAfterMs)
 
     return function clearHideTimeout() {
       window.clearTimeout(hideTimeout)
@@ -33,7 +33,7 @@ const Notification = () => {
 
   return (
     <div style={style}>
-      {notification}
+      {notification.content}
     </div>
   )
 }
