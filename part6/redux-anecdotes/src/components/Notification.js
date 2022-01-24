@@ -1,11 +1,11 @@
 
 import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { connect } from 'react-redux'
 import { removeNotification } from '../reducers/notificationReducer'
 
-const Notification = () => {
-  const notification = useSelector(state => state.notification)
-  const dispatch = useDispatch()
+const Notification = (props) => {
+  const notification = props.notification
+  const removeNotification = props.removeNotification
 
   useEffect(() => {
     if (!notification) {
@@ -13,13 +13,13 @@ const Notification = () => {
     }
 
     const hideTimeout = window.setTimeout(() => {
-      dispatch(removeNotification())
+      removeNotification()
     }, notification.hideAfterMs)
 
     return function clearHideTimeout() {
       window.clearTimeout(hideTimeout)
     }
-  }, [notification, dispatch])
+  }, [notification, removeNotification])
 
   const style = {
     border: 'solid',
@@ -38,4 +38,15 @@ const Notification = () => {
   )
 }
 
-export default Notification
+const mapStateToProps = (state) => {
+  return {
+    notification: state.notification
+  }
+}
+
+const mapDispatchToProps = {
+  removeNotification
+}
+
+const ConnectedNotification = connect(mapStateToProps, mapDispatchToProps)(Notification)
+export default ConnectedNotification
