@@ -1,13 +1,3 @@
-const getId = () => (100000 * Math.random()).toFixed(0)
-
-const asObject = (anecdote) => {
-  return {
-    content: anecdote,
-    id: getId(),
-    votes: 0
-  }
-}
-
 const initialState = []
 
 const reducer = (state = initialState, action) => {
@@ -27,7 +17,7 @@ const reducer = (state = initialState, action) => {
 
       return updatedState
     case 'ANECDOTE_ADD':
-      return state.concat(asObject(action.anecdote))
+      return state.concat(action.anecdote)
     case 'ANECDOTES_INIT':
       return action.anecdotes
     default:
