@@ -7,6 +7,7 @@ import Togglable from './components/Togglable'
 import { addBlog, initBlogs, likeBlog, removeBlog } from './reducers/blogReducer'
 
 import { addNotification, removeNotification } from './reducers/notificationReducer'
+import { setUser } from './reducers/userReducer'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -20,12 +21,12 @@ const Notification = ({ type, message }) => (
 const App = () => {
   const notification = useSelector(state => state.notification)
   const blogs = useSelector(state => state.blogs)
+  const user = useSelector(state => state.user)
 
   const dispatch = useDispatch()
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
 
   const newBlogFormRef = useRef()
 
@@ -35,7 +36,7 @@ const App = () => {
     if (userAsJson) {
       const user = JSON.parse(userAsJson)
 
-      setUser(user)
+      dispatch(setUser(user))
       blogService.setToken(user.token)
     }
   }, [])
@@ -70,7 +71,7 @@ const App = () => {
       window.localStorage.setItem('user', JSON.stringify(user))
 
       blogService.setToken(user.token)
-      setUser(user)
+      dispatch(setUser(user))
 
       setUsername('')
       setPassword('')
