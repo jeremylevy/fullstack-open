@@ -2,16 +2,16 @@ const initialState = null
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-  case 'USER_SET':
+  case 'LOGGED_USER_SET':
     return action.user
   default:
     return state
   }
 }
 
-export const setUser = (user) => {
+export const setLoggedUser = (user) => {
   return {
-    type: 'USER_SET',
+    type: 'LOGGED_USER_SET',
     user
   }
 }

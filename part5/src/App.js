@@ -1,13 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
+import {
+  BrowserRouter as Router,
+  Switch, Route
+} from 'react-router-dom'
+
 import Blog from './components/Blog'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
+import UserList from './components/UserList'
 import { addBlog, initBlogs, likeBlog, removeBlog } from './reducers/blogReducer'
 
 import { addNotification, removeNotification } from './reducers/notificationReducer'
-import { setUser } from './reducers/userReducer'
+import { setLoggedUser } from './reducers/loggedUserReducer'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -21,7 +27,7 @@ const Notification = ({ type, message }) => (
 const App = () => {
   const notification = useSelector(state => state.notification)
   const blogs = useSelector(state => state.blogs)
-  const user = useSelector(state => state.user)
+  const loggedUser = useSelector(state => state.loggedUser)
 
   const dispatch = useDispatch()
 
@@ -36,18 +42,18 @@ const App = () => {
     if (userAsJson) {
       const user = JSON.parse(userAsJson)
 
-      dispatch(setUser(user))
+      dispatch(setLoggedUser(user))
       blogService.setToken(user.token)
     }
   }, [])
 
   useEffect(() => {
-    if (!user) {
+    if (!loggedUser) {
       return
     }
 
     dispatch(initBlogs())
-  }, [user])
+  }, [loggedUser])
 
   const displayNotification = (type, message, hideAfterMs = 5000) => {
     dispatch(addNotification(
@@ -71,7 +77,7 @@ const App = () => {
       window.localStorage.setItem('user', JSON.stringify(user))
 
       blogService.setToken(user.token)
-      dispatch(setUser(user))
+      dispatch(setLoggedUser(user))
 
       setUsername('')
       setPassword('')
@@ -86,7 +92,7 @@ const App = () => {
     event.preventDefault()
 
     window.localStorage.removeItem('user')
-    setUser(null)
+    setLoggedUser(null)
   }
 
   const addNewBlog = async (newBlog) => {
@@ -118,7 +124,7 @@ const App = () => {
     }
   }
 
-  if (user === null) {
+  if (loggedUser === null) {
     return (
       <div>
         <h2>Log in to application</h2>
@@ -157,20 +163,30 @@ const App = () => {
       { notification ? <Notification type={notification.type} message={notification.message} /> : null }
 
       <p>
-        { user.name } logged in&nbsp;
+        { loggedUser.name } logged in&nbsp;
         <button onClick={handleLogout}>logout</button>
       </p>
 
-      <Togglable buttonLabel="create new blog" ref={newBlogFormRef}>
-        <NewBlogForm addNewBlog={addNewBlog} />
-      </Togglable>
+      <Router>
+        <Switch>
+          <Route path="/users">
+            <UserList />
+          </Route>
 
-      { blogs.map(blog => <Blog
-        key={blog.id}
-        loggedUser={user}
-        blog={blog}
-        handleBlogLike={handleBlogLike}
-        handleBlogRemove={handleBlogRemove} />) }
+          <Route path="/">
+            <Togglable buttonLabel="create new blog" ref={newBlogFormRef}>
+              <NewBlogForm addNewBlog={addNewBlog} />
+            </Togglable>
+
+            { blogs.map(blog => <Blog
+              key={blog.id}
+              loggedUser={loggedUser}
+              blog={blog}
+              handleBlogLike={handleBlogLike}
+              handleBlogRemove={handleBlogRemove} />) }
+          </Route>
+        </Switch>
+      </Router>
     </div>
   )
 }
