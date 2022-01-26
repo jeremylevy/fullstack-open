@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import Blog from './components/Blog'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
-import { addBlog, initBlogs } from './reducers/blogReducer'
+import { addBlog, initBlogs, likeBlog, removeBlog } from './reducers/blogReducer'
 
 import { addNotification, removeNotification } from './reducers/notificationReducer'
 
@@ -101,23 +101,17 @@ const App = () => {
 
   const handleBlogLike = async (updatedBlogData) => {
     try {
-      const updatedBlog = await blogService.update(updatedBlogData)
-
-      //setBlogs(blogs.map(blog => blog.id !== updatedBlog.id ? blog : updatedBlog))
-
-      displayNotification('success', `blog ${updatedBlog.title} by ${updatedBlog.author} liked`)
+      dispatch(likeBlog(updatedBlogData))
+      displayNotification('success', `blog ${updatedBlogData.title} by ${updatedBlogData.author} liked`)
     } catch (exception) {
       console.log(exception)
     }
   }
 
-  const handleBlogDeletion = async (blogToDelete) => {
+  const handleBlogRemove = async (blogToRemove) => {
     try {
-      await blogService.remove(blogToDelete)
-
-      //setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
-
-      displayNotification('success', `blog ${blogToDelete.title} by ${blogToDelete.author} deleted`)
+      dispatch(removeBlog(blogToRemove))
+      displayNotification('success', `blog ${blogToRemove.title} by ${blogToRemove.author} deleted`)
     } catch (exception) {
       console.log(exception)
     }
@@ -175,7 +169,7 @@ const App = () => {
         loggedUser={user}
         blog={blog}
         handleBlogLike={handleBlogLike}
-        handleBlogDeletion={handleBlogDeletion} />) }
+        handleBlogRemove={handleBlogRemove} />) }
     </div>
   )
 }

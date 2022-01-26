@@ -4,7 +4,7 @@ const Blog = ({
   loggedUser,
   blog,
   handleBlogLike,
-  handleBlogDeletion
+  handleBlogRemove
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -27,7 +27,7 @@ const Blog = ({
       return
     }
 
-    await handleBlogDeletion(blog)
+    await handleBlogRemove(blog)
   }
 
   const toggleExpandedView = (event) => {
