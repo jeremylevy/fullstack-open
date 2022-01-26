@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import Blog from './components/Blog'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
+import { addBlog, initBlogs } from './reducers/blogReducer'
 
 import { addNotification, removeNotification } from './reducers/notificationReducer'
 
@@ -18,13 +19,9 @@ const Notification = ({ type, message }) => (
 
 const App = () => {
   const notification = useSelector(state => state.notification)
-  const dispatch = useDispatch()
+  const blogs = useSelector(state => state.blogs)
 
-  const [blogs, _setBlogs] = useState([])
-  // We want blogs ordered by likes (most liked first)
-  const setBlogs = (blogs) => {
-    _setBlogs([...blogs].sort((blogA, blogB) => blogB.likes - blogA.likes))
-  }
+  const dispatch = useDispatch()
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -48,7 +45,7 @@ const App = () => {
       return
     }
 
-    blogService.getAll().then(blogs => setBlogs(blogs))
+    dispatch(initBlogs())
   }, [user])
 
   const displayNotification = (type, message, hideAfterMs = 5000) => {
@@ -93,9 +90,8 @@ const App = () => {
 
   const addNewBlog = async (newBlog) => {
     try {
-      const createdBlog = await blogService.create(newBlog)
-      setBlogs(blogs.concat(createdBlog))
-      displayNotification('success', `a new blog ${createdBlog.title} by ${createdBlog.author} added`)
+      dispatch(addBlog(newBlog))
+      displayNotification('success', `a new blog ${newBlog.title} by ${newBlog.author} added`)
 
       newBlogFormRef.current.toggleVisibility()
     } catch (exception) {
@@ -107,7 +103,7 @@ const App = () => {
     try {
       const updatedBlog = await blogService.update(updatedBlogData)
 
-      setBlogs(blogs.map(blog => blog.id !== updatedBlog.id ? blog : updatedBlog))
+      //setBlogs(blogs.map(blog => blog.id !== updatedBlog.id ? blog : updatedBlog))
 
       displayNotification('success', `blog ${updatedBlog.title} by ${updatedBlog.author} liked`)
     } catch (exception) {
@@ -119,7 +115,7 @@ const App = () => {
     try {
       await blogService.remove(blogToDelete)
 
-      setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
+      //setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
 
       displayNotification('success', `blog ${blogToDelete.title} by ${blogToDelete.author} deleted`)
     } catch (exception) {
