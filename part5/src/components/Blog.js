@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { Button, Form } from 'react-bootstrap'
 
 import { commentBlog, loadBlogs } from '../reducers/blogReducer'
 
@@ -43,16 +44,23 @@ const Blog = ({ handleBlogLike }) => {
 
       <p><a href={blog.info}>{blog.info}</a></p>
 
-      {blog.likes} likes <button onClick={preHandleBlogLike}>like</button>
+      {blog.likes} likes&nbsp;
+
+      <Button variant="secondary" onClick={preHandleBlogLike} size="sm">like</Button>
 
       <p>added by {blog.author}</p>
 
       <h3>comments</h3>
 
-      <form onSubmit={handleNewCommentSubmit}>
-        <input type="text" name="comment" />
-        <button type="submit">add comment</button>
-      </form>
+      <Form onSubmit={handleNewCommentSubmit}>
+        <Form.Group>
+          <Form.Label>comment:</Form.Label>
+          <Form.Control type="text" name="comment" />
+          <Button variant="primary" type="submit">
+            add comment
+          </Button>
+        </Form.Group>
+      </Form>
 
       <ul>
         { blog.comments.map((comment, i) => <li key={i}>{comment}</li>) }

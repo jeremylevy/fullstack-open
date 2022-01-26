@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route } from 'react-router-dom'
+import { Form, Button, Alert } from 'react-bootstrap'
 
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
@@ -19,9 +20,9 @@ import Blog from './components/Blog'
 import Nav from './components/Nav'
 
 const Notification = ({ type, message }) => (
-  <div className={'notification ' + type}>
+  <Alert variant={type}>
     {message}
-  </div>
+  </Alert>
 )
 
 const App = () => {
@@ -118,38 +119,38 @@ const App = () => {
 
   if (loggedUser === null) {
     return (
-      <div>
+      <div className="container">
         <h2>Log in to application</h2>
 
         { notification ? <Notification type={notification.type} message={notification.message} /> : null }
 
-        <form className="loginForm" onSubmit={handleLogin}>
-          <div>
-            username
-            <input
+        <Form className="loginForm" onSubmit={handleLogin}>
+          <Form.Group>
+            <Form.Label>username:</Form.Label>
+            <Form.Control
               type="text"
               value={username}
               name="Username"
               onChange={({ target }) => setUsername(target.value)}
             />
-          </div>
-          <div>
-            password
-            <input
+            <Form.Label>password:</Form.Label>
+            <Form.Control
               type="password"
               value={password}
               name="Password"
               onChange={({ target }) => setPassword(target.value)}
             />
-          </div>
-          <button type="submit">login</button>
-        </form>
+            <Button variant="primary" type="submit">
+              login
+            </Button>
+          </Form.Group>
+        </Form>
       </div>
     )
   }
 
   return (
-    <div>
+    <div className="container">
       <h2>blogs</h2>
 
       { notification ? <Notification type={notification.type} message={notification.message} /> : null }

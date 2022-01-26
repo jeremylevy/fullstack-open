@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { Table } from 'react-bootstrap'
 
 import { loadBlogs } from '../reducers/blogReducer'
 
@@ -12,11 +13,21 @@ const BlogList = () => {
     dispatch(loadBlogs())
   }, [])
 
-  return blogs.map(blog => (
-    <div key={blog.id} className="blog">
-      <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-    </div>
-  ))
+  return (
+    <Table striped>
+      <tbody>
+        {
+          blogs.map(blog => (
+            <tr key={blog.id}>
+              <td>
+                <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </Table>
+  )
 }
 
 export default BlogList
