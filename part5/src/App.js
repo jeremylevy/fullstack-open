@@ -1,17 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-
-import {
-  BrowserRouter as Router,
-  Switch, Route
-} from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
 
 import Blog from './components/Blog'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
 import UserList from './components/UserList'
-import { addBlog, initBlogs, likeBlog, removeBlog } from './reducers/blogReducer'
+import User from './components/User'
 
+import { addBlog, initBlogs, likeBlog, removeBlog } from './reducers/blogReducer'
 import { addNotification, removeNotification } from './reducers/notificationReducer'
 import { setLoggedUser } from './reducers/loggedUserReducer'
 
@@ -167,26 +164,28 @@ const App = () => {
         <button onClick={handleLogout}>logout</button>
       </p>
 
-      <Router>
-        <Switch>
-          <Route path="/users">
-            <UserList />
-          </Route>
+      <Switch>
+        <Route path="/users/:id">
+          <User />
+        </Route>
 
-          <Route path="/">
-            <Togglable buttonLabel="create new blog" ref={newBlogFormRef}>
-              <NewBlogForm addNewBlog={addNewBlog} />
-            </Togglable>
+        <Route path="/users">
+          <UserList />
+        </Route>
 
-            { blogs.map(blog => <Blog
-              key={blog.id}
-              loggedUser={loggedUser}
-              blog={blog}
-              handleBlogLike={handleBlogLike}
-              handleBlogRemove={handleBlogRemove} />) }
-          </Route>
-        </Switch>
-      </Router>
+        <Route path="/">
+          <Togglable buttonLabel="create new blog" ref={newBlogFormRef}>
+            <NewBlogForm addNewBlog={addNewBlog} />
+          </Togglable>
+
+          { blogs.map(blog => <Blog
+            key={blog.id}
+            loggedUser={loggedUser}
+            blog={blog}
+            handleBlogLike={handleBlogLike}
+            handleBlogRemove={handleBlogRemove} />) }
+        </Route>
+      </Switch>
     </div>
   )
 }
