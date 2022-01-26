@@ -13,8 +13,10 @@ import { setLoggedUser } from './reducers/loggedUserReducer'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
+
 import BlogList from './components/BlogList'
 import Blog from './components/Blog'
+import Nav from './components/Nav'
 
 const Notification = ({ type, message }) => (
   <div className={'notification ' + type}>
@@ -152,10 +154,9 @@ const App = () => {
 
       { notification ? <Notification type={notification.type} message={notification.message} /> : null }
 
-      <p>
-        { loggedUser.name } logged in&nbsp;
-        <button onClick={handleLogout}>logout</button>
-      </p>
+      <Nav
+        loggedUser={loggedUser}
+        handleLogout={handleLogout} />
 
       <Switch>
         <Route path="/users/:id">
