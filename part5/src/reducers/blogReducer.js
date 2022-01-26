@@ -9,6 +9,7 @@ const reducer = (state = initialState, action) => {
   case 'BLOG_ADD':
     return state.concat(action.blog)
   case 'BLOG_LIKE':
+  case 'BLOG_COMMENT':
     return state.map(blog => blog.id !== action.blog.id ? blog : action.blog)
   case 'BLOG_REMOVE':
     return state.filter(blog => blog.id !== action.blog.id)
@@ -61,6 +62,17 @@ export const removeBlog = (blogToRemove) => {
     dispatch({
       type: 'BLOG_REMOVE',
       blog: blogToRemove
+    })
+  }
+}
+
+export const commentBlog = (blog, comment) => {
+  return async dispatch => {
+    const updatedBlog = await blogService.comment(blog, comment)
+
+    dispatch({
+      type: 'BLOG_COMMENT',
+      blog: updatedBlog
     })
   }
 }

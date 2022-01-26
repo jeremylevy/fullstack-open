@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { loadBlogs } from '../reducers/blogReducer'
+import { commentBlog, loadBlogs } from '../reducers/blogReducer'
 
 const Blog = ({ handleBlogLike }) => {
   const dispatch = useDispatch()
@@ -24,6 +24,15 @@ const Blog = ({ handleBlogLike }) => {
     })
   }
 
+  const handleNewCommentSubmit = async (event) => {
+    event.preventDefault()
+
+    const comment = event.target.comment.value
+    dispatch(commentBlog(blog, comment))
+
+    event.target.comment.value = ''
+  }
+
   if (!blog) {
     return null
   }
@@ -31,10 +40,20 @@ const Blog = ({ handleBlogLike }) => {
   return (
     <div>
       <h2>{blog.title}</h2>
+
       <p><a href={blog.info}>{blog.info}</a></p>
+
       {blog.likes} likes <button onClick={preHandleBlogLike}>like</button>
+
       <p>added by {blog.author}</p>
+
       <h3>comments</h3>
+
+      <form onSubmit={handleNewCommentSubmit}>
+        <input type="text" name="comment" />
+        <button type="submit">add comment</button>
+      </form>
+
       <ul>
         { blog.comments.map((comment, i) => <li key={i}>{comment}</li>) }
       </ul>
