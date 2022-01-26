@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 
 import Blog from './components/Blog'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
+
+import { addNotification, removeNotification } from './reducers/notificationReducer'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -14,7 +17,8 @@ const Notification = ({ type, message }) => (
 )
 
 const App = () => {
-  const [notification, setNotification] = useState(null)
+  const notification = useSelector(state => state.notification)
+  const dispatch = useDispatch()
 
   const [blogs, _setBlogs] = useState([])
   // We want blogs ordered by likes (most liked first)
@@ -47,13 +51,14 @@ const App = () => {
     blogService.getAll().then(blogs => setBlogs(blogs))
   }, [user])
 
-  const displayNotification = (type, message, timeout = 5000) => {
-    setNotification({
+  const displayNotification = (type, message, hideAfterMs = 5000) => {
+    dispatch(addNotification(
       type,
-      message
-    })
+      message,
+      hideAfterMs
+    ))
 
-    setTimeout(() => setNotification(null), timeout)
+    setTimeout(() => dispatch(removeNotification()), hideAfterMs)
   }
 
   const handleLogin = async (event) => {
