@@ -34,6 +34,10 @@ const Blog = ({ handleBlogLike }) => {
       <p><a href={blog.info}>{blog.info}</a></p>
       {blog.likes} likes <button onClick={preHandleBlogLike}>like</button>
       <p>added by {blog.author}</p>
+      <h3>comments</h3>
+      <ul>
+        { blog.comments.map((comment, i) => <li key={i}>{comment}</li>) }
+      </ul>
     </div>
   )
 }
