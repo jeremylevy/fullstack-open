@@ -13,7 +13,7 @@ const UserList = () => {
   }, [])
 
   return (
-    <>
+    <div>
       <h2>users</h2>
 
       <table>
@@ -34,7 +34,7 @@ const UserList = () => {
           }
         </tbody>
       </table>
-    </>
+    </div>
   )
 }
 

@@ -4,7 +4,7 @@ const initialState = []
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-  case 'BLOGS_INIT':
+  case 'BLOGS_LOAD':
     return action.blogs
   case 'BLOG_ADD':
     return state.concat(action.blog)
@@ -17,12 +17,16 @@ const reducer = (state = initialState, action) => {
   }
 }
 
-export const initBlogs = () => {
-  return async dispatch => {
+export const loadBlogs = () => {
+  return async (dispatch, getState) => {
+    if (getState().blogs.length) {
+      return
+    }
+
     const blogs = await blogService.getAll()
 
     dispatch({
-      type: 'BLOGS_INIT',
+      type: 'BLOGS_LOAD',
       blogs
     })
   }

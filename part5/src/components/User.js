@@ -22,7 +22,7 @@ const User = () => {
   }
 
   return (
-    <>
+    <div>
       <h2>{user.name}</h2>
       <h3>added blogs</h3>
 
@@ -35,7 +35,7 @@ const User = () => {
           ))
         }
       </ul>
-    </>
+    </div>
   )
 }
 

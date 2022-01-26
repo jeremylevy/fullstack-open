@@ -1,12 +1,18 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { useParams } from 'react-router-dom'
 
-const Blog = ({
-  loggedUser,
-  blog,
-  handleBlogLike,
-  handleBlogRemove
-}) => {
-  const [isExpanded, setIsExpanded] = useState(false)
+import { loadBlogs } from '../reducers/blogReducer'
+
+const Blog = ({ handleBlogLike }) => {
+  const dispatch = useDispatch()
+
+  const blogId = useParams().id
+  const blog = useSelector(state => state.blogs.find(blog => blog.id === blogId))
+
+  useEffect(() => {
+    dispatch(loadBlogs())
+  }, [])
 
   const preHandleBlogLike = async (event) => {
     event.preventDefault()
@@ -18,60 +24,16 @@ const Blog = ({
     })
   }
 
-  const preHandleBlogDeletion = async (event) => {
-    event.preventDefault()
-
-    const deletionConfirmed = window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
-
-    if (!deletionConfirmed) {
-      return
-    }
-
-    await handleBlogRemove(blog)
+  if (!blog) {
+    return null
   }
-
-  const toggleExpandedView = (event) => {
-    event.preventDefault()
-    setIsExpanded(!isExpanded)
-  }
-
-  const collapsedView = () => (
-    <div>
-      <p>
-        {blog.title} by {blog.author}
-        &nbsp;
-        <button onClick={toggleExpandedView}>show</button>
-      </p>
-    </div>
-  )
-
-  const expandedView = () => (
-    <div>
-      <p>
-        {blog.title}
-        &nbsp;
-        <button onClick={toggleExpandedView}>hide</button>
-      </p>
-
-      <p>{blog.url}</p>
-
-      <p>
-        likes {blog.likes}
-        &nbsp;
-        <button onClick={preHandleBlogLike}>like</button>
-      </p>
-
-      <p>{blog.author}</p>
-
-      { blog.user.username === loggedUser.username
-        ? <button onClick={preHandleBlogDeletion}>remove</button>
-        : null }
-    </div>
-  )
 
   return (
-    <div className="blog">
-      { isExpanded ? expandedView() : collapsedView() }
+    <div>
+      <h2>{blog.title}</h2>
+      <p><a href={blog.info}>{blog.info}</a></p>
+      {blog.likes} likes <button onClick={preHandleBlogLike}>like</button>
+      <p>added by {blog.author}</p>
     </div>
   )
 }

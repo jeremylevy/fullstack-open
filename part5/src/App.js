@@ -2,18 +2,19 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route } from 'react-router-dom'
 
-import Blog from './components/Blog'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
 import UserList from './components/UserList'
 import User from './components/User'
 
-import { addBlog, initBlogs, likeBlog, removeBlog } from './reducers/blogReducer'
+import { addBlog, likeBlog, removeBlog } from './reducers/blogReducer'
 import { addNotification, removeNotification } from './reducers/notificationReducer'
 import { setLoggedUser } from './reducers/loggedUserReducer'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
+import BlogList from './components/BlogList'
+import Blog from './components/Blog'
 
 const Notification = ({ type, message }) => (
   <div className={'notification ' + type}>
@@ -23,7 +24,7 @@ const Notification = ({ type, message }) => (
 
 const App = () => {
   const notification = useSelector(state => state.notification)
-  const blogs = useSelector(state => state.blogs)
+  // const blogs = useSelector(state => state.blogs)
   const loggedUser = useSelector(state => state.loggedUser)
 
   const dispatch = useDispatch()
@@ -43,14 +44,6 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
-
-  useEffect(() => {
-    if (!loggedUser) {
-      return
-    }
-
-    dispatch(initBlogs())
-  }, [loggedUser])
 
   const displayNotification = (type, message, hideAfterMs = 5000) => {
     dispatch(addNotification(
@@ -89,7 +82,7 @@ const App = () => {
     event.preventDefault()
 
     window.localStorage.removeItem('user')
-    setLoggedUser(null)
+    dispatch(setLoggedUser(null))
   }
 
   const addNewBlog = async (newBlog) => {
@@ -173,17 +166,19 @@ const App = () => {
           <UserList />
         </Route>
 
+        <Route path="/blogs/:id">
+          <Blog
+            loggedUser={loggedUser}
+            handleBlogLike={handleBlogLike}
+            handleBlogRemove={handleBlogRemove}
+          />
+        </Route>
+
         <Route path="/">
           <Togglable buttonLabel="create new blog" ref={newBlogFormRef}>
             <NewBlogForm addNewBlog={addNewBlog} />
           </Togglable>
-
-          { blogs.map(blog => <Blog
-            key={blog.id}
-            loggedUser={loggedUser}
-            blog={blog}
-            handleBlogLike={handleBlogLike}
-            handleBlogRemove={handleBlogRemove} />) }
+          <BlogList />
         </Route>
       </Switch>
     </div>
